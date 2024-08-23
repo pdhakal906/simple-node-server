@@ -1,4 +1,4 @@
-// server.js
+
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -27,27 +27,32 @@ app.post('/upload', upload.single('file'), (req, res) => {
 // Serve a simple HTML form for file upload
 app.get('/', (req, res) => {
   res.send(`
-    <h2>File Upload</h2>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-      <input type="file" name="file" />
-      <button type="submit">Upload</button>
-    </form>
-    <h2>Uploaded Files</h2>
-    <div id="file-list"></div>
-    <script>
-      fetch('/files')
-        .then(response => response.json())
-        .then(files => {
-          const fileList = document.getElementById('file-list');
-          files.forEach(file => {
-            const img = document.createElement('img');
-            img.src = '/uploads/' + file;
-            img.alt = file;
-            img.style.width = '200px'; // Adjust the width as needed
-            fileList.appendChild(img);
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>File Upload</title>
+      
+    </head>
+    <body>
+
+      <div id="file-list"></div>
+      <script>
+        fetch('/files')
+          .then(response => response.json())
+          .then(files => {
+            const fileList = document.getElementById('file-list');
+            files.forEach(file => {
+              const img = document.createElement('img');
+              img.src = '/uploads/' + file;
+              img.alt = file;
+              fileList.appendChild(img);
+            });
           });
-        });
-    </script>
+      </script>
+    </body>
+    </html>
   `);
 });
 
