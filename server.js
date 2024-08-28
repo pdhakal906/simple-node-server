@@ -51,26 +51,51 @@ app.get('/', (req, res) => {
             const fileList = document.getElementById('file-list');
             fileList.innerHTML = '';
             files.forEach(file => {
-              const fileDiv = document.createElement('div');
-              const img = document.createElement('img');
-              img.src = '/uploads/' + file;
-              img.alt = file;
-              img.style.maxWidth = '200px';
-              img.style.display = 'block';
-              fileDiv.appendChild(img);
+              console.log("fhhd");
+              if (file.endsWith('.mp4') || file.endsWith('.avi') || file.endsWith('.mkv') || file.endsWith('.mov')) {
+                const fileDiv = document.createElement('div');
+                const video = document.createElement('video');
+                video.src = '/uploads/' + file;
+                video.width= 320
+                video.width = 240
+                fileDiv.appendChild(video);
 
-              const deleteButton = document.createElement('button');
-              deleteButton.textContent = 'Delete';
-              deleteButton.onclick = () => {
-                fetch('/delete/' + file, { method: 'DELETE' })
-                  .then(() => {
-                    window.location.reload(); // Refresh the page after deletion
-                  })
-                  .catch(err => console.error('Error deleting file:', err));
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => {
+                  fetch('/delete/' + file, { method: 'DELETE' })
+                    .then(() => {
+                      window.location.reload(); // Refresh the page after deletion
+                    })
+                    .catch(err => console.error('Error deleting file:', err));
+                };
+                fileDiv.appendChild(deleteButton);
+
+                fileList.appendChild(fileDiv);
+              } 
+              else {
+                    const fileDiv = document.createElement('div');
+                    const img = document.createElement('img');
+                    img.src = '/uploads/' + file;
+                    img.alt = file;
+                    img.style.maxWidth = '320px';
+                    img.style.display = 'block';
+                    fileDiv.appendChild(img);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.onclick = () => {
+                      fetch('/delete/' + file, { method: 'DELETE' })
+                        .then(() => {
+                          window.location.reload(); // Refresh the page after deletion
+                        })
+                        .catch(err => console.error('Error deleting file:', err));
+                    };
+                    fileDiv.appendChild(deleteButton);
+
+                    fileList.appendChild(fileDiv);
               };
-              fileDiv.appendChild(deleteButton);
-
-              fileList.appendChild(fileDiv);
+              
             });
           });
       </script>
