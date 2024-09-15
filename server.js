@@ -2,10 +2,35 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const userRoutes = require('./routes/userRoutes');
+// Load environment variables from the .env file
+require('dotenv').config();
+
+// Access environment variables
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USER;
+const dbPass = process.env.DB_PASS;
+
 
 const app = express();
 const port = 3000;
 
+//allows lilent querying
+mongoose.set('strictQuery', false)
+
+mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.mp5chzg.mongodb.net/${dbName}`).then((result) => {
+  app.listen(port);
+}).catch((err) => {
+  console.log(err)
+})
+
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(userRoutes);
 // Configure storage for multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -123,7 +148,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get("/game/create", (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'CreatePage.html'));
 })
-
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'LoginPage.html'));
+})
 app.get("/game/join", (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'JoinPage.html'));
 })
@@ -136,8 +163,4 @@ app.delete('/delete/:filename', (req, res) => {
     }
     res.sendStatus(200);
   });
-});
-
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
 });
