@@ -117,6 +117,16 @@ app.get('/files', (req, res) => {
   });
 });
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.get("/game/create", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'CreatePage.html'));
+})
+
+app.get("/game/join", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'JoinPage.html'));
+})
 // Endpoint to delete an uploaded file
 app.delete('/delete/:filename', (req, res) => {
   const filepath = path.join('uploads', req.params.filename);
