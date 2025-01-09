@@ -23,85 +23,21 @@ app.post('/upload', upload.single('file'), (req, res) => {
   res.redirect('/'); // Refresh the page after upload
 });
 
+// Route to handle folder upload
+app.post('/upload-folder', upload.array('files'), (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).send('No files uploaded.');
+  }
+
+  // Send response with uploaded files
+  const filePaths = req.files.map(file => file.path);
+  res.redirect('/');
+});
+
 // Serve a simple HTML form for file upload
 app.get('/', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>File Upload</title>
-    </head>
-    <body>
-      <h1>Upload a File</h1>
-      <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required />
-        <button type="submit">Upload</button>
-      </form>
 
-      <h2>Uploaded Files</h2>
-      <div id="file-list"></div>
-
-      <script>
-        // Fetch and display uploaded files
-        fetch('/files')
-          .then(response => response.json())
-          .then(files => {
-            const fileList = document.getElementById('file-list');
-            fileList.innerHTML = '';
-            files.forEach(file => {
-              console.log("fhhd");
-              if (file.endsWith('.mp4') || file.endsWith('.avi') || file.endsWith('.mkv') || file.endsWith('.mov')) {
-                const fileDiv = document.createElement('div');
-                const video = document.createElement('video');
-                video.src = '/uploads/' + file;
-                video.width= 320
-                video.width = 240
-                fileDiv.appendChild(video);
-
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.onclick = () => {
-                  fetch('/delete/' + file, { method: 'DELETE' })
-                    .then(() => {
-                      window.location.reload(); // Refresh the page after deletion
-                    })
-                    .catch(err => console.error('Error deleting file:', err));
-                };
-                fileDiv.appendChild(deleteButton);
-
-                fileList.appendChild(fileDiv);
-              } 
-              else {
-                    const fileDiv = document.createElement('div');
-                    const img = document.createElement('img');
-                    img.src = '/uploads/' + file;
-                    img.alt = file;
-                    img.style.maxWidth = '320px';
-                    img.style.display = 'block';
-                    fileDiv.appendChild(img);
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.onclick = () => {
-                      fetch('/delete/' + file, { method: 'DELETE' })
-                        .then(() => {
-                          window.location.reload(); // Refresh the page after deletion
-                        })
-                        .catch(err => console.error('Error deleting file:', err));
-                    };
-                    fileDiv.appendChild(deleteButton);
-
-                    fileList.appendChild(fileDiv);
-              };
-              
-            });
-          });
-      </script>
-    </body>
-    </html>
-  `);
+  res.sendFile(path.join(__dirname, 'public', 'UploadPage.html'))
 });
 
 // Serve the uploads directory
